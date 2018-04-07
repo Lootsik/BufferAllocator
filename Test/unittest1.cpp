@@ -4,7 +4,7 @@
 #include <ctime>
 #include <vector>
 
-#include "../src/BufferManager.h"
+#include "../src/buffer_manager.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -16,26 +16,26 @@ namespace UnitTest
 		TEST_METHOD(AllocateAndRelease)
 		{
 			const size_t buffers = 100;
-			BufferManager<512, buffers> Manager;
+			buffer_manager<512, buffers> Manager;
 
 			for (int i = 0; i < buffers; ++i)
 			{
-				auto ptr = Manager.GetBuffer();
-				Manager.ReleaseBuffer(ptr);
+				auto ptr = Manager.get_buffer();
+				Manager.release_buffer(ptr);
 			}
 		}	
 		
 		TEST_METHOD(AllocateAllAndRelease)
 		{
 			const size_t buffers = 100;
-			BufferManager<512, buffers> Manager;
+			buffer_manager<512, buffers> Manager;
 
 			std::vector<uint8_t*> allocatedBuffers;
 			
 			try {
 				for (int i = 0; i < buffers; ++i)
 				{
-					auto ptr = Manager.GetBuffer();
+					auto ptr = Manager.get_buffer();
 					allocatedBuffers.push_back(ptr);
 				}
 			}
@@ -47,7 +47,7 @@ namespace UnitTest
 			bool ex_catch = false;
 	
 			try {
-				Manager.GetBuffer();
+				Manager.get_buffer();
 			}
 			catch( const std::bad_alloc& )
 			{
@@ -61,7 +61,7 @@ namespace UnitTest
 
 			for (int i = 0; i < buffers; ++i)
 			{
-				Manager.ReleaseBuffer(allocatedBuffers[i]);
+				Manager.release_buffer(allocatedBuffers[i]);
 			}
 
 		}
@@ -71,14 +71,14 @@ namespace UnitTest
 			srand(time(NULL));
 
 			const size_t buffers = 100;
-			BufferManager<512, buffers> Manager;
+			buffer_manager<512, buffers> Manager;
 
 			std::vector<uint8_t*> allocatedBuffers;
 
 			try {
 				for (int i = 0; i < buffers; ++i)
 				{
-					auto ptr = Manager.GetBuffer();
+					auto ptr = Manager.get_buffer();
 					allocatedBuffers.push_back(ptr);
 				}
 			}
@@ -90,7 +90,7 @@ namespace UnitTest
 			bool ex_catch = false;
 
 			try {
-				Manager.GetBuffer();
+				Manager.get_buffer();
 			}
 			catch (const std::bad_alloc&)
 			{
@@ -107,7 +107,7 @@ namespace UnitTest
 			{
 				int rand_index = rand() % random_range;
 
-				Manager.ReleaseBuffer(allocatedBuffers[rand_index]);
+				Manager.release_buffer(allocatedBuffers[rand_index]);
 				allocatedBuffers.erase(allocatedBuffers.begin() + rand_index);
 
 				random_range--;
