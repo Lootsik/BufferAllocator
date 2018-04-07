@@ -11,6 +11,7 @@ constexpr Integer div_round_greater(const Integer divisible, const Iteger2 divid
 	return divisible / divider + (divisible % divider == 0 ? 0 : 1);
 }
 
+
 //  storage type must be unsigned
 template< size_t BitCount,typename StorType = uint32_t >
 class bit_field
@@ -169,13 +170,22 @@ private:
     
 
 
-
     static unsigned get_first_on_bit(storage_type num)
     {
-        return static_cast<unsigned>(std::log2(num & (~num + 1)));
+		// saving only lowest bit
+		num &= ~num + 1;
+		return log2(num);
     }
     
-    
+	// faster for unsigned ints
+	static unsigned log2(uint64_t n)
+	{
+#define S(k) if (n >= (UINT64_C(1) << k)) { i += k; n >>= k; }
+		unsigned i = -(n == 0);
+		S(32); S(16); S(8); S(4); S(2); S(1);
+		return i;
+#undef S
+	}
 	
 	/*
 			Helper function to find bit position
